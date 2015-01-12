@@ -3,6 +3,9 @@ package com.google.gwt.debugformat.client;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Provides reflective access to a Java or JavaScript object, for display in the debugger.
  * The default implementation displays if it's a generic Java object.
@@ -28,7 +31,14 @@ class Mirror {
   }
 
   Page getChildren(Any any) {
-    return new Page(any.toJava().getFields(), 0);
+    return any.toJava().getFields().firstPage();
+  }
+
+  /**
+   * Returns other mirrors required to render children of this mirror.
+   */
+  List<Mirror> childDeps() {
+    return Collections.emptyList();
   }
 
   /**
@@ -84,6 +94,10 @@ class Mirror {
 
     final void add(String name, Any value) {
       push(Child.create(name, value));
+    }
+
+    final Page firstPage() {
+      return new Page(this, 0);
     }
   }
 

@@ -17,15 +17,16 @@ public class Installer implements EntryPoint {
   }
 
   private static native JavaScriptObject wrap(Formatter formatter) /*-{
-    var f = {};
+    // Make delegate available mostly for debugging.
+    var f = {"delegate": formatter};
     f.header = function (obj) {
-      return formatter.@Formatter::header(Lcom/google/gwt/debugformat/client/Any;)(obj);
+      return f.delegate.@Formatter::header(Lcom/google/gwt/debugformat/client/Any;)(obj);
     }
     f.hasBody = function (obj) {
-      return formatter.@Formatter::hasBody(Lcom/google/gwt/debugformat/client/Any;)(obj);
+      return f.delegate.@Formatter::hasBody(Lcom/google/gwt/debugformat/client/Any;)(obj);
     }
     f.body = function (obj) {
-      return formatter.@Formatter::body(Lcom/google/gwt/debugformat/client/Any;)(obj);
+      return f.delegate.@Formatter::body(Lcom/google/gwt/debugformat/client/Any;)(obj);
     }
     return f;
   }-*/;

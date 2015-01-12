@@ -13,6 +13,10 @@ class Any extends JavaScriptObject {
     return obj;
   }-*/;
 
+  static native Any fromInt(int val) /*-{
+    return val;
+  }-*/;
+
   /**
    * Returns the result of the JavaScript typeof operator.
    */

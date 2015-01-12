@@ -1,6 +1,5 @@
 package com.google.gwt.debugformat.client;
 
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -16,21 +15,28 @@ class MapMirror extends Mirror {
   @Override
   public boolean hasChildren(Any any) {
     Map m = (Map) any.toObject();
+    assert m != null;
     return !m.isEmpty();
   }
 
   @Override
   public Page getChildren(Any any) {
+    Map m = (Map) any.toObject();
 
+    Children out = Children.create();
+    out.add("size", Any.fromInt(m.size()));
+    out.add("entries", Any.fromObject(makeEntries(m)));
+    return out.firstPage();
+  }
+
+  private static Page makeEntries(Map map) {
     // It would be nice to sort the list, but we can only do that if the keys are comparable.
     // (And we don't want to sort a LinkedHashMap.)
 
     Children out = Children.create();
 
-    Map m = (Map) any.toObject();
-    Iterator it = m.entrySet().iterator();
-    while (it.hasNext()) {
-      Map.Entry e = (Map.Entry) it.next();
+    for (Object o : map.entrySet()) {
+      Map.Entry e = (Map.Entry) o;
       Object key = e.getKey();
       String keyName = key == null ? "null" : key.toString();
       out.add(keyName, Any.fromObject(e.getValue()));

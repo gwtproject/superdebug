@@ -2,8 +2,7 @@ package com.google.gwt.debugformat.client;
 
 import com.google.gwt.core.shared.GWT;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.google.gwt.debugformat.client.Mirror.Child;
 
@@ -11,18 +10,27 @@ import static com.google.gwt.debugformat.client.Mirror.Child;
  * Provides custom formats by trying each mirror in turn.
  */
 class MirrorFormatter implements Formatter {
-  private final List<Mirror> mirrors;
+  private final LinkedHashSet<Mirror> mirrors;
 
   MirrorFormatter(List<Mirror> mirrors) {
-    List<Mirror> m = new ArrayList<>();
-    m.add(new PageMirror());
-    m.addAll(mirrors);
-    this.mirrors = m;
+    LinkedHashSet<Mirror> out = new LinkedHashSet<>();
+    out.add(new PageMirror());
+
+    // Find all the mirrors and their dependencies.
+    // (Breadth-first for no particular reason.)
+    Queue<Mirror> toVisit = new LinkedList<>(mirrors);
+    while (!toVisit.isEmpty()) {
+      Mirror m = toVisit.remove();
+      out.add(m);
+      toVisit.addAll(m.childDeps());
+    }
+    this.mirrors = out;
   }
 
   @Override
   public TemplateNode header(Any object) {
     try {
+      if ("object".equals(object.typeof()))
       for (Mirror m : mirrors) {
         if (m.canDisplay(object)) {
           String header = m.getHeader(object);
@@ -38,12 +46,17 @@ class MirrorFormatter implements Formatter {
 
   @Override
   public boolean hasBody(Any object) {
-    for (Mirror mirror : mirrors) {
-      if (mirror.canDisplay(object)) {
-        return mirror.hasChildren(object);
+    try {
+      for (Mirror mirror : mirrors) {
+        if (mirror.canDisplay(object)) {
+          return mirror.hasChildren(object);
+        }
       }
+      return false;
+    } catch (Exception e) {
+      GWT.log("error while formatting Java object", e);
+      return false;
     }
-    return false;
   }
 
   @Override
