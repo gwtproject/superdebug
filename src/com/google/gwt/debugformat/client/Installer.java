@@ -3,6 +3,8 @@ package com.google.gwt.debugformat.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JavaScriptObject;
 
+import java.util.Arrays;
+
 /**
  * Installs the custom formatter.
  */
@@ -10,7 +12,7 @@ public class Installer implements EntryPoint {
   @Override
   public void onModuleLoad() {
     //Formatter f = new HelloFormatter();
-    Formatter f = new JavaFormatter();
+    Formatter f = new MirrorFormatter(Arrays.asList(new MapMirror(), new Mirror()));
     installFormatter(wrap(f));
   }
 

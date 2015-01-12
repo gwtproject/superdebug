@@ -3,60 +3,72 @@ package com.google.gwt.debugformat.client;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.shared.GWT;
 
-import static com.google.gwt.debugformat.client.JavaObject.Field;
+import static com.google.gwt.debugformat.client.Mirror.Child;
 
 /**
- * Provides a custom format for generic Java objects.
+ * Provides custom formats by trying each mirror in turn.
  */
-public class JavaFormatter implements Formatter {
+class MirrorFormatter implements Formatter {
+  private final Iterable<Mirror> mirrors;
+
+  MirrorFormatter(Iterable<Mirror> mirrors) {
+    this.mirrors = mirrors;
+  }
+
   @Override
   public TemplateNode header(Any object) {
-
-    JavaObject obj = object.toJava();
-    if (obj == null) {
-      return null;
-    }
-
     try {
-      return javaHeader(obj);
+      for (Mirror m : mirrors) {
+        if (m.canDisplay(object)) {
+          String header = m.getHeader(object);
+          return renderHeader(header);
+        }
+      }
+      return null;
     } catch (Exception e) {
       GWT.log("error while formatting header for Java object", e);
       return null;
     }
   }
 
-  private TemplateNode javaHeader(JavaObject obj) {
-    TemplateBuilder b = new TemplateBuilder("span");
-    b.text(obj.getClassName() + " (Java)");
-    return b.build();
-  }
-
   @Override
   public boolean hasBody(Any object) {
-    JavaObject obj = object.toJava();
-    return obj != null && obj.hasFields();
+    for (Mirror mirror : mirrors) {
+      if (mirror.canDisplay(object)) {
+        return mirror.hasChildren(object);
+      }
+    }
+    return false;
   }
 
   @Override
   public TemplateNode body(Any object) {
-    JavaObject obj = object.toJava();
-    if (obj == null) {
-      return null;
-    }
     try {
-      return renderFields(obj.getFields());
+      for (Mirror m : mirrors) {
+        if (m.canDisplay(object)) {
+          JsArray<Child> children = m.getChildren(object);
+          return renderFields(children);
+        }
+      }
+      return null;
     } catch (Exception e) {
       GWT.log("error while formatting body for Java object", e);
       return null;
     }
   }
 
-  private TemplateNode renderFields(JsArray<Field> fields) {
+  private static TemplateNode renderHeader(String header) {
+    TemplateBuilder b = new TemplateBuilder("span");
+    b.text(header);
+    return b.build();
+  }
+
+  private static TemplateNode renderFields(JsArray<Child> fields) {
     TemplateBuilder out = new TemplateBuilder("ol");
     out.style("list-style-type:none; padding-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 12px");
 
     for (int i = 0; i < fields.length(); i++) {
-      Field f = fields.get(i);
+      Child f = fields.get(i);
       Any value = f.getValue();
 
       out.startTag("li");
@@ -82,7 +94,7 @@ public class JavaFormatter implements Formatter {
     return out.build();
   }
 
-  private void nameSpan(TemplateBuilder out, Field f) {
+  private static void nameSpan(TemplateBuilder out, Child f) {
     out.startTag("span", "color: rgb(136, 19, 145)");
     out.text(f.getName() + ": ");
     out.endTag();

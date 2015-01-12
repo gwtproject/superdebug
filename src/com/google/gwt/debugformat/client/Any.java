@@ -9,6 +9,10 @@ import com.google.gwt.core.client.JavaScriptObject;
 class Any extends JavaScriptObject {
   protected Any() {}
 
+  static native Any fromObject(Object obj) /*-{
+    return obj;
+  }-*/;
+
   /**
    * Returns the result of the JavaScript typeof operator.
    */
@@ -50,4 +54,11 @@ class Any extends JavaScriptObject {
       return null;
     }
   }-*/;
+
+  /**
+   * Returns the same object in its normal Java representation, or null if not Java.
+   */
+  final Object toObject() {
+    return toJava();
+  }
 }

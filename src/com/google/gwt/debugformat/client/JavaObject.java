@@ -1,8 +1,5 @@
 package com.google.gwt.debugformat.client;
 
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
-
 /**
  * A reflective representation of a Java object.
  */
@@ -17,7 +14,7 @@ class JavaObject extends Any {
     return !!Object.keys(this).length
   }-*/;
 
-  final native JsArray<Field> getFields() /*-{
+  final native Mirror.Children getFields() /*-{
 
     // TODO: we need a test to ensure this is in sync with JsIncrementalNamer
     function getFieldName(key) {
@@ -51,27 +48,4 @@ class JavaObject extends Any {
     });
     return fields;
   }-*/;
-
-  /**
-   * Returns the same object in its normal Java representation.
-   */
-  final native Object toObject() /*-{
-    return this;
-  }-*/;
-
-  /**
-   * Represents a field in a Java object.
-   * Doesn't pick up mutations if the field is set.
-   */
-  static class Field extends JavaScriptObject {
-    protected Field() {}
-
-    final native String getName() /*-{
-      return this.name;
-    }-*/;
-
-    final native Any getValue() /*-{
-      return this.value;
-    }-*/;
-  }
 }
