@@ -2,7 +2,10 @@ package com.google.gwt.debugformat.client;
 
 import com.google.gwt.core.shared.GWT;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 import static com.google.gwt.debugformat.client.Mirror.Child;
 
@@ -49,7 +52,7 @@ class MirrorFormatter implements Formatter {
     try {
       for (Mirror mirror : mirrors) {
         if (mirror.canDisplay(object)) {
-          return mirror.hasChildren(object);
+          return mirror.hasBody(object);
         }
       }
       return false;
@@ -64,7 +67,7 @@ class MirrorFormatter implements Formatter {
     try {
       for (Mirror m : mirrors) {
         if (m.canDisplay(object)) {
-          Mirror.Page first = m.getChildren(object);
+          Mirror.Page first = m.getBody(object);
           return renderFields(first);
         }
       }
@@ -138,12 +141,12 @@ class MirrorFormatter implements Formatter {
     }
 
     @Override
-    boolean hasChildren(Any any) {
+    boolean hasBody(Any any) {
       return true;
     }
 
     @Override
-    Page getChildren(Any any) {
+    Page getBody(Any any) {
       return (Page) any.toObject();
     }
   }

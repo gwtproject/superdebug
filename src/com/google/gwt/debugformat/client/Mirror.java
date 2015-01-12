@@ -26,11 +26,11 @@ class Mirror {
     return any.toJava().getClassName() + " (Java)";
   }
 
-  boolean hasChildren(Any any) {
+  boolean hasBody(Any any) {
     return any.toJava().hasFields();
   }
 
-  Page getChildren(Any any) {
+  Page getBody(Any any) {
     return any.toJava().getFields().firstPage();
   }
 
@@ -92,7 +92,15 @@ class Mirror {
       return [];
     }-*/;
 
-    final void add(String name, Any value) {
+    final void add(String name, Object value) {
+      addAny(name, Any.fromObject(value));
+    }
+
+    final void addInt(String name, int value) {
+      addAny(name, Any.toJsNumber(value));
+    }
+
+    final void addAny(String name, Any value) {
       push(Child.create(name, value));
     }
 

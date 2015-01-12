@@ -12,19 +12,19 @@ public class CollectionMirror extends Mirror {
   }
 
   @Override
-  boolean hasChildren(Any any) {
+  boolean hasBody(Any any) {
     Collection c = (Collection) any.toObject();
     assert c != null;
     return !c.isEmpty();
   }
 
   @Override
-  Page getChildren(Any any) {
+  Page getBody(Any any) {
     Collection c = (Collection) any.toObject();
 
     Children out = Children.create();
-    out.add("size", Any.fromInt(c.size()));
-    out.add("entries", Any.fromObject(makeEntries(c)));
+    out.addInt("size", c.size());
+    out.add("entries", makeEntries(c));
     return out.firstPage();
   }
 
@@ -34,9 +34,10 @@ public class CollectionMirror extends Mirror {
     int i = 0;
     for (Object item : c) {
       String keyName = String.valueOf(i);
-      out.add(keyName, Any.fromObject(item));
+      out.add(keyName, item);
       i++;
     }
+
     return out.firstPage();
   }
 }

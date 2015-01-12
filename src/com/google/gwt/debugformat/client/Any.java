@@ -13,7 +13,7 @@ class Any extends JavaScriptObject {
     return obj;
   }-*/;
 
-  static native Any fromInt(int val) /*-{
+  static native Any toJsNumber(int val) /*-{
     return val;
   }-*/;
 

@@ -13,19 +13,19 @@ class MapMirror extends Mirror {
   }
 
   @Override
-  public boolean hasChildren(Any any) {
+  public boolean hasBody(Any any) {
     Map m = (Map) any.toObject();
     assert m != null;
     return !m.isEmpty();
   }
 
   @Override
-  public Page getChildren(Any any) {
+  public Page getBody(Any any) {
     Map m = (Map) any.toObject();
 
     Children out = Children.create();
-    out.add("size", Any.fromInt(m.size()));
-    out.add("entries", Any.fromObject(makeEntries(m)));
+    out.addInt("size", m.size());
+    out.add("entries", makeEntries(m));
     return out.firstPage();
   }
 
@@ -39,7 +39,7 @@ class MapMirror extends Mirror {
       Map.Entry e = (Map.Entry) o;
       Object key = e.getKey();
       String keyName = key == null ? "null" : key.toString();
-      out.add(keyName, Any.fromObject(e.getValue()));
+      out.add(keyName, e.getValue());
     }
 
     return new Page(out, 0);
