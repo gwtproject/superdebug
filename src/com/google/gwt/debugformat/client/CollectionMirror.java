@@ -19,7 +19,7 @@ public class CollectionMirror extends Mirror {
   }
 
   @Override
-  Children getChildren(Any any) {
+  Page getChildren(Any any) {
 
     Children out = Children.create();
 
@@ -33,6 +33,6 @@ public class CollectionMirror extends Mirror {
       i++;
     }
 
-    return out;
+    return new Page(out, 0);
   }
 }

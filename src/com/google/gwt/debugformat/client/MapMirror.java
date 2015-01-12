@@ -20,7 +20,7 @@ class MapMirror extends Mirror {
   }
 
   @Override
-  public Children getChildren(Any any) {
+  public Page getChildren(Any any) {
 
     // It would be nice to sort the list, but we can only do that if the keys are comparable.
     // (And we don't want to sort a LinkedHashMap.)
@@ -36,6 +36,6 @@ class MapMirror extends Mirror {
       out.add(keyName, Any.fromObject(e.getValue()));
     }
 
-    return out;
+    return new Page(out, 0);
   }
 }

@@ -8,8 +8,6 @@ import com.google.gwt.core.client.JsArray;
  * The default implementation displays if it's a generic Java object.
  */
 class Mirror {
-  // The number of children to display before a "More" prompt.
-  static final int PAGE_SIZE = 1000;
 
   /**
    * Returns true if this mirror can display the given object.
@@ -29,8 +27,49 @@ class Mirror {
     return any.toJava().hasFields();
   }
 
-  Children getChildren(Any any) {
-    return any.toJava().getFields();
+  Page getChildren(Any any) {
+    return new Page(any.toJava().getFields(), 0);
+  }
+
+  /**
+   * Used to page through large lists of children.
+   */
+  static class Page {
+    // The number of children to display before a "More" prompt.
+    static final int CHILDREN_PER_PAGE = 100;
+
+    private final Mirror.Children children;
+    private final int start;
+
+    Page(Mirror.Children children, int start) {
+      this.children = children;
+      this.start = start;
+    }
+
+    int firstIndex() {
+      return start;
+    }
+
+    int lastIndex() {
+      return firstIndex() + length() - 1;
+    }
+
+    int length() {
+      int remaining = children.length() - start;
+      return remaining > CHILDREN_PER_PAGE ? CHILDREN_PER_PAGE : remaining;
+    }
+
+    Child get(int index) {
+      return children.get(index + start);
+    }
+
+    Page nextPage() {
+      int remaining = children.length() - start;
+      if (remaining <= CHILDREN_PER_PAGE) {
+        return null;
+      }
+      return new Page(children, start + CHILDREN_PER_PAGE);
+    }
   }
 
   /**
