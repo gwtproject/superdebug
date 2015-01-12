@@ -1,7 +1,5 @@
 package com.google.gwt.debugformat.client;
 
-import com.google.gwt.core.client.JavaScriptObject;
-
 /**
  * A custom renderer for objects being inspected in a debugger.
  */
@@ -12,15 +10,15 @@ interface Formatter {
    * or null if there is no custom format for this object.
    * (If null, a default will be used.)
    */
-  TemplateNode header(JavaScriptObject object);
+  TemplateNode header(Any object);
 
   /**
    * Returns true if the object can be expanded in the debugger.
    */
-  boolean hasBody(JavaScriptObject object);
+  boolean hasBody(Any object);
 
   /**
    * Returns the expanded version of an object being inspected in the debugger.
    */
-  TemplateNode body(JavaScriptObject object);
+  TemplateNode body(Any object);
 }

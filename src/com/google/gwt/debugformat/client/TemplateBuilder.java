@@ -4,9 +4,6 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayMixed;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Builds an HTML element (and its children) in JsonML format.
  */
@@ -36,17 +33,18 @@ class TemplateBuilder {
     node.push(text);
   }
 
-  void object(Object obj) {
-    node.push(TemplateNode.fromObject(obj));
-  }
-
   void startTag(String tagName) {
     startTag(tagName, null);
   }
 
   void startTag(String tagName, String style) {
-    parents.push(node);
-    node = createNode(tagName, style);
+    JsArrayMixed child = createNode(tagName, style);
+    startChild(child);
+  }
+
+  void startObjectRef(Any obj) {
+    JsArrayMixed child = (JsArrayMixed) (JavaScriptObject) TemplateNode.createObjectRef(obj);
+    startChild(child);
   }
 
   void endTag() {
@@ -59,10 +57,14 @@ class TemplateBuilder {
     return (TemplateNode)((JavaScriptObject)node);
   }
 
+  private void startChild(JsArrayMixed child) {
+    node.push(child);
+    parents.push(node);
+    node = child;
+  }
+
   private static JsArrayMixed createNode(String tagName, String style) {
-    JsArrayMixed node = (JsArrayMixed) JavaScriptObject.createArray();
-    node.push(tagName);
-    node.push(JavaScriptObject.createObject());
+    JsArrayMixed node = (JsArrayMixed) (JavaScriptObject) TemplateNode.createElement(tagName);
     setNodeStyle(node, style);
     return node;
   }

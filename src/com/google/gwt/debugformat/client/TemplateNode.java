@@ -11,17 +11,23 @@ class TemplateNode extends JavaScriptObject {
   protected TemplateNode() {}
 
   /**
-   * Creates a plain text node.
+   * Create a node representing an HTML element.
+   * These tags are allowed: div, span, ol, li, table, tr, td.
+   * (This is not checked here, but DevTools won't render a template containing any others.)
    */
-  static native TemplateNode fromText(String text) /*-{
-    return text;
+  static native TemplateNode createElement(String tag) /*-{
+    // Work around a bug in Devtools.
+    // It expects the array's constructor to belong to the top-level window.
+    // Reported as a comment on: https://codereview.chromium.org/774903003/
+    return new $wnd.Array(tag, {});
   }-*/;
 
   /**
-   * Creates a reference to a child object. The debugger will render it (recursively).
+   * Creates a reference to a child object that should be substituted into the template.
+   * (The debugger will render it as an inspectable child object.)
    */
-  static native TemplateNode fromObject(Object obj) /*-{
-    return ["object", {"object": obj}];
+  static native TemplateNode createObjectRef(Any obj) /*-{
+    return new $wnd.Array("object", {"object": obj});
   }-*/;
 
 }
