@@ -8,6 +8,8 @@ import com.google.gwt.core.client.JsArray;
  * The default implementation displays if it's a generic Java object.
  */
 class Mirror {
+  // The number of children to display before a "More" prompt.
+  static final int PAGE_SIZE = 1000;
 
   /**
    * Returns true if this mirror can display the given object.

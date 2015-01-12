@@ -3,8 +3,7 @@ package com.google.gwt.debugformat.example.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JavaScriptObject;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Main implements EntryPoint {
 
@@ -20,9 +19,11 @@ public class Main implements EntryPoint {
   private static class Example {
     private final String aString = "a string";
     private final int anInt = 1234;
+    private final long aLong = 12345l;
     private final JavaScriptObject emptyJsObject = JavaScriptObject.createObject();
     private final JavaScriptObject jsObject = makeJsObject();
     private final Map<String, Object> aMap = makeExampleMap();
+    private final List<Integer> aList = Arrays.asList(1, 2, 3);
 
     private static native JavaScriptObject makeJsObject() /*-{
       function Thing() {}

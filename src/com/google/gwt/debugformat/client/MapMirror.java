@@ -3,9 +3,10 @@ package com.google.gwt.debugformat.client;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * Provides a custom format for subclasses of Map that just shows their keys and values.
+ */
 class MapMirror extends Mirror {
-  // The number of children to display before a "More" prompt.
-  private static final int PAGE_SIZE = 1000;
 
   @Override
   public boolean canDisplay(Any any) {
@@ -24,20 +25,15 @@ class MapMirror extends Mirror {
     // It would be nice to sort the list, but we can only do that if the keys are comparable.
     // (And we don't want to sort a LinkedHashMap.)
 
-    Map m = (Map) any.toObject();
-    Iterator it = m.entrySet().iterator();
-
     Children out = Children.create();
 
-    int i = 0;
+    Map m = (Map) any.toObject();
+    Iterator it = m.entrySet().iterator();
     while (it.hasNext()) {
-      if (i > PAGE_SIZE) {
-        break; // TODO: more button
-      }
       Map.Entry e = (Map.Entry) it.next();
       Object key = e.getKey();
-      out.add(key == null ? "null" : key.toString(), Any.fromObject(e.getValue()));
-      i++;
+      String keyName = key == null ? "null" : key.toString();
+      out.add(keyName, Any.fromObject(e.getValue()));
     }
 
     return out;
