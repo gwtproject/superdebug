@@ -93,7 +93,7 @@ class Any extends JavaScriptObject {
   /**
    * Returns the Java fields as name-value pairs, or null if not Java.
    */
-  final Slice getJavaFields() {
+  final Children.Slice getJavaFields() {
     if (!isJava()) {
       return null;
     }

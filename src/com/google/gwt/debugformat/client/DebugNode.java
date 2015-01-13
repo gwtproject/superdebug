@@ -1,14 +1,14 @@
 package com.google.gwt.debugformat.client;
 
 /**
- * A fake node in the debug tree.
- * (It doesn't correspond directly to a JavaScript object.)
+ * A fake node in the debugger tree.
+ * (It need not correspond directly to a JavaScript object.)
  */
 class DebugNode {
   final String header;
-  final Slice body;
+  final Children.Slice body;
 
-  DebugNode(String header, Slice body) {
+  DebugNode(String header, Children.Slice body) {
     this.header = header;
     this.body = body;
   }
@@ -21,7 +21,7 @@ class DebugNode {
     return body != null;
   }
 
-  Slice getBody() {
+  Children.Slice getBody() {
     return body;
   }
 }

@@ -12,14 +12,14 @@ public class CollectionMirror extends Mirror {
   }
 
   @Override
-  boolean hasBody(Any any) {
+  boolean hasChildren(Any any) {
     Collection c = (Collection) any.toJava();
     assert c != null;
     return !c.isEmpty();
   }
 
   @Override
-  Slice getBody(Any any) {
+  Children.Slice getChildren(Any any) {
     Collection c = (Collection) any.toJava();
 
     Children out = Children.create();

@@ -18,10 +18,6 @@ class TemplateBuilder {
     node = createNode(tagName, null);
   }
 
-  TemplateBuilder(String tagName, String style) {
-    node = createNode(tagName, style);
-  }
-
   /**
    * Sets the style of the current element.
    */

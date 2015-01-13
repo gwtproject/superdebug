@@ -1,14 +1,9 @@
 package com.google.gwt.debugformat.client;
 
-import com.google.gwt.core.client.JavaScriptObject;
-
-import java.util.Collections;
-import java.util.List;
-
 /**
- * Provides reflective access to a Java or JavaScript object, for display in the debugger.
+ * Provides reflective access to a Java or JavaScript object, for display in the debugger as a tree.
  *
- * <p>The default implementation handles Java objects by displaying their fields.
+ * <p>The default implementation accepts regular Java objects and displays their fields.
  */
 class Mirror {
 
@@ -26,37 +21,17 @@ class Mirror {
     return any.getJavaClassName() + " (Java)";
   }
 
-  boolean hasBody(Any any) {
+  /**
+   * Returns true if the node in the debugger tree will have children.
+   */
+  boolean hasChildren(Any any) {
     return any.hasJavaFields();
   }
 
-  Slice getBody(Any any) {
+  /**
+   * Calculates the children to be displayed in the debugger tree.
+   */
+  Children.Slice getChildren(Any any) {
     return any.getJavaFields();
-  }
-
-  /**
-   * Returns other mirrors required to render children of this mirror.
-   */
-  List<Mirror> childDeps() {
-    return Collections.emptyList();
-  }
-
-  /**
-   * Represents a child node in the debugger.
-   */
-  static class Child extends JavaScriptObject {
-    protected Child() {}
-
-    static native Child create(String name, Any value) /*-{
-      return {name: name, value: value};
-    }-*/;
-
-    final native String getName() /*-{
-      return this.name;
-    }-*/;
-
-    final native Any getValue() /*-{
-      return this.value;
-    }-*/;
   }
 }

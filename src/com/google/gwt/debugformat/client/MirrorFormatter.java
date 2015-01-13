@@ -3,9 +3,7 @@ package com.google.gwt.debugformat.client;
 import com.google.gwt.core.shared.GWT;
 
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * Provides custom formats by trying each mirror in turn.
@@ -14,18 +12,10 @@ class MirrorFormatter implements Formatter {
   private final LinkedHashSet<Mirror> mirrors;
 
   MirrorFormatter(List<Mirror> mirrors) {
-    LinkedHashSet<Mirror> out = new LinkedHashSet<>();
-    out.add(new DebugNodeMirror());
-
-    // Find all the mirrors and their dependencies.
-    // (Breadth-first for no particular reason.)
-    Queue<Mirror> toVisit = new LinkedList<>(mirrors);
-    while (!toVisit.isEmpty()) {
-      Mirror m = toVisit.remove();
-      out.add(m);
-      toVisit.addAll(m.childDeps());
-    }
-    this.mirrors = out;
+    LinkedHashSet<Mirror> ms = new LinkedHashSet<>();
+    ms.add(new DebugNodeMirror());
+    ms.addAll(mirrors);
+    this.mirrors = ms;
   }
 
   @Override
@@ -51,7 +41,7 @@ class MirrorFormatter implements Formatter {
     try {
       for (Mirror mirror : mirrors) {
         if (mirror.canDisplay(object)) {
-          return mirror.hasBody(object);
+          return mirror.hasChildren(object);
         }
       }
       return false;
@@ -66,7 +56,7 @@ class MirrorFormatter implements Formatter {
     try {
       for (Mirror m : mirrors) {
         if (m.canDisplay(object)) {
-          Slice first = m.getBody(object);
+          Children.Slice first = m.getChildren(object);
           return renderBody(first);
         }
       }
@@ -83,7 +73,7 @@ class MirrorFormatter implements Formatter {
     return b.build();
   }
 
-  static TemplateNode renderBody(Slice slice) {
+  static TemplateNode renderBody(Children.Slice slice) {
     TemplateBuilder out = new TemplateBuilder("ol");
     out.style("list-style-type:none; padding-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 12px");
 
@@ -94,14 +84,14 @@ class MirrorFormatter implements Formatter {
     return out.build();
   }
 
-  private static void renderChild(TemplateBuilder out, Mirror.Child child) {
-    Any value = child.getValue();
+  private static void renderChild(TemplateBuilder out, Children.Entry entry) {
+    Any value = entry.getValue();
 
     out.startTag("li");
 
     if (value.isJsObject()) {
       out.startObjectRef(value);
-      nameSpan(out, child.getName());
+      nameSpan(out, entry.getName());
       if (!value.isJava()) {
         // The header isn't automatically generated for non-custom objects.
         out.text(value.getJsName());
@@ -110,7 +100,7 @@ class MirrorFormatter implements Formatter {
     } else {
       out.style("padding-left: 13px;");
       out.startTag("span");
-      nameSpan(out, child.getName());
+      nameSpan(out, entry.getName());
       out.text(value.getJsStringValue());
       out.endTag();
     }
@@ -140,13 +130,13 @@ class MirrorFormatter implements Formatter {
     }
 
     @Override
-    boolean hasBody(Any any) {
+    boolean hasChildren(Any any) {
       DebugNode n = (DebugNode) any.toJava();
       return n.hasBody();
     }
 
     @Override
-    Slice getBody(Any any) {
+    Children.Slice getChildren(Any any) {
       DebugNode n = (DebugNode) any.toJava();
       return n.getBody();
     }

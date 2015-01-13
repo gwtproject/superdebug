@@ -13,14 +13,14 @@ class MapMirror extends Mirror {
   }
 
   @Override
-  public boolean hasBody(Any any) {
+  public boolean hasChildren(Any any) {
     Map m = (Map) any.toJava();
     assert m != null;
     return !m.isEmpty();
   }
 
   @Override
-  public Slice getBody(Any any) {
+  public Children.Slice getChildren(Any any) {
     Map m = (Map) any.toJava();
 
     Children out = Children.create();
