@@ -83,6 +83,13 @@ class Any extends JavaScriptObject {
     return getClass().getName();
   }
 
+  final String getShortJavaClassName() {
+    if (!isJava()) {
+      return null;
+    }
+    return getClass().getSimpleName();
+  }
+
   /**
    * Returns true if this is a Java object with at least one field.
    */

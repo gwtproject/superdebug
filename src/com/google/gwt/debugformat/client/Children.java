@@ -76,7 +76,7 @@ class Children extends JsArray<Children.Entry> {
   }
 
   private static String getRangeName(int start, int end) {
-    return "[" + start + " \u2026 " + (end - 1) + "]";
+    return "[" + start + " … " + (end - 1) + "]";
   }
 
   /**

@@ -1,5 +1,6 @@
 package com.google.gwt.debugformat.client;
 
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -10,6 +11,51 @@ class MapMirror extends Mirror {
   @Override
   public boolean canDisplay(Any any) {
     return any.toJava() instanceof Map;
+  }
+
+  @Override
+  String getHeader(Context ctx, Any any) {
+    assert any.toJava() instanceof Map;
+    Map m = (Map) any.toJava();
+
+    StringBuilder out = new StringBuilder();
+    out.append(any.getShortJavaClassName());
+    out.append("[");
+    out.append(m.size());
+    out.append("] {");
+
+    @SuppressWarnings("unchecked")
+    Iterator<Map.Entry> it = m.entrySet().iterator();
+
+    for (int i = 0; i < 4; i++) {
+      if (!it.hasNext()) {
+        out.append("}");
+        return out.toString();
+      }
+
+      Map.Entry entry = it.next();
+
+      String key = ctx.getShortName(Any.fromJava(entry.getKey()));
+      String value = ctx.getShortName(Any.fromJava(entry.getValue()));
+      if (key == null || value == null) {
+        if (i == 0) {
+          out.append("…}");
+          return out.toString();
+        } else {
+          break;
+        }
+      }
+
+      if (i > 0) {
+        out.append(", ");
+      }
+      out.append(key);
+      out.append(" => ");
+      out.append(value);
+    }
+
+    out.append(", …}");
+    return out.toString();
   }
 
   @Override

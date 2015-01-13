@@ -6,6 +6,7 @@ package com.google.gwt.debugformat.client;
  * <p>The default implementation accepts regular Java objects and displays their fields.
  */
 class Mirror {
+  static final int MAX_SHORT_NAME = 10;
 
   /**
    * Returns true if this mirror can display the given object.
@@ -15,10 +16,18 @@ class Mirror {
   }
 
   /**
+   * Returns a short name that can be used in a header, or null if not available.
+   * The name will only be used if it's less than {@link #MAX_SHORT_NAME} characters.
+   */
+  String getShortName(Any any) {
+    return null;
+  }
+
+  /**
    * Returns a single-line summary of the object, to be displayed before it's expanded.
    */
-  String getHeader(Any any) {
-    return any.getJavaClassName() + " (Java)";
+  String getHeader(Context ctx, Any any) {
+    return any.getShortJavaClassName() + " (Java)";
   }
 
   /**
@@ -33,5 +42,16 @@ class Mirror {
    */
   Children.Slice getChildren(Any any) {
     return any.getJavaFields();
+  }
+
+  interface Context {
+
+    /**
+     * Returns a short name (not more than 20 characters or so) that can be used in a header,
+     * or null if not available.
+     *
+     * <p>This will poll all the mirrors.
+     */
+    String getShortName(Any any);
   }
 }

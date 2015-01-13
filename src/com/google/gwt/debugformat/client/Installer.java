@@ -12,7 +12,8 @@ public class Installer implements EntryPoint {
   @Override
   public void onModuleLoad() {
     //Formatter f = new HelloFormatter();
-    Formatter f = new MirrorFormatter(Arrays.asList(new MapMirror(), new CollectionMirror(), new Mirror()));
+    Formatter f = new MirrorFormatter(Arrays.asList(
+        new NumberMirror(), new MapMirror(), new CollectionMirror(), new Mirror()));
     installFormatter(wrap(f));
   }
 

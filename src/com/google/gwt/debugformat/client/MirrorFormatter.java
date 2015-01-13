@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Provides custom formats by trying each mirror in turn.
  */
-class MirrorFormatter implements Formatter {
+class MirrorFormatter implements Formatter, Mirror.Context {
   private final LinkedHashSet<Mirror> mirrors;
 
   MirrorFormatter(List<Mirror> mirrors) {
@@ -19,12 +19,33 @@ class MirrorFormatter implements Formatter {
   }
 
   @Override
+  public String getShortName(Any any) {
+    if (any.isJsObject()) {
+      for (Mirror m : mirrors) {
+        if (m.canDisplay(any)) {
+          String shortName = m.getShortName(any);
+          if (shortName != null && shortName.length() <= Mirror.MAX_SHORT_NAME) {
+            return shortName;
+          }
+          return null;
+        }
+      }
+    } else {
+      String shortName = any.getJsStringValue();
+      if (shortName.length() <= Mirror.MAX_SHORT_NAME) {
+        return shortName;
+      }
+    }
+    return null;
+  }
+
+  @Override
   public TemplateNode header(Any any) {
     try {
       if (any.isJsObject()) {
         for (Mirror m : mirrors) {
           if (m.canDisplay(any)) {
-            String header = m.getHeader(any);
+            String header = m.getHeader(this, any);
             return renderHeader(header);
           }
         }
@@ -56,8 +77,7 @@ class MirrorFormatter implements Formatter {
     try {
       for (Mirror m : mirrors) {
         if (m.canDisplay(object)) {
-          Children.Slice first = m.getChildren(object);
-          return renderBody(first);
+          return renderBody(object, m.getChildren(object));
         }
       }
       return null;
@@ -73,12 +93,21 @@ class MirrorFormatter implements Formatter {
     return b.build();
   }
 
-  static TemplateNode renderBody(Children.Slice slice) {
+  static TemplateNode renderBody(Any object, Children.Slice children) {
     TemplateBuilder out = new TemplateBuilder("ol");
     out.style("list-style-type:none; padding-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 12px");
 
-    for (int i = 0; i < slice.length(); i++) {
-      renderChild(out, slice.get(i));
+    for (int i = 0; i < children.length(); i++) {
+      renderChild(out, children.get(i));
+    }
+
+    if (object.isJava()) {
+      out.startTag("li");
+      out.style("padding-left: 13px;");
+
+      nameSpan(out, "class:");
+      out.text(object.getJavaClassName());
+      out.endTag();
     }
 
     return out.build();
@@ -124,9 +153,9 @@ class MirrorFormatter implements Formatter {
     }
 
     @Override
-    String getHeader(Any any) {
+    String getHeader(Context ctx, Any any) {
       DebugNode n = (DebugNode) any.toJava();
-      return n.getHeader();
+      return n.getHeader(ctx);
     }
 
     @Override

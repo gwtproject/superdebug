@@ -13,7 +13,7 @@ class DebugNode {
     this.body = body;
   }
 
-  String getHeader() {
+  String getHeader(Mirror.Context ctx) {
     return header;
   }
 
