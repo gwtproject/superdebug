@@ -8,27 +8,28 @@ import java.util.Collection;
 public class CollectionMirror extends Mirror {
   @Override
   boolean canDisplay(Any any) {
-    return any.toObject() instanceof Collection;
+    return any.toJava() instanceof Collection;
   }
 
   @Override
   boolean hasBody(Any any) {
-    Collection c = (Collection) any.toObject();
+    Collection c = (Collection) any.toJava();
     assert c != null;
     return !c.isEmpty();
   }
 
   @Override
-  Page getBody(Any any) {
-    Collection c = (Collection) any.toObject();
+  Slice getBody(Any any) {
+    Collection c = (Collection) any.toJava();
 
     Children out = Children.create();
     out.addInt("size", c.size());
     out.add("entries", makeEntries(c));
+    out.add("other fields", any.getJavaFields());
     return out.firstPage();
   }
 
-  private static Page makeEntries(Collection c) {
+  private static Slice makeEntries(Collection c) {
     Children out = Children.create();
 
     int i = 0;

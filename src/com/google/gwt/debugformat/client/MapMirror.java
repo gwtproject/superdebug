@@ -9,27 +9,28 @@ class MapMirror extends Mirror {
 
   @Override
   public boolean canDisplay(Any any) {
-    return any.toObject() instanceof Map;
+    return any.toJava() instanceof Map;
   }
 
   @Override
   public boolean hasBody(Any any) {
-    Map m = (Map) any.toObject();
+    Map m = (Map) any.toJava();
     assert m != null;
     return !m.isEmpty();
   }
 
   @Override
-  public Page getBody(Any any) {
-    Map m = (Map) any.toObject();
+  public Slice getBody(Any any) {
+    Map m = (Map) any.toJava();
 
     Children out = Children.create();
     out.addInt("size", m.size());
     out.add("entries", makeEntries(m));
+    out.add("other fields", any.getJavaFields());
     return out.firstPage();
   }
 
-  private static Page makeEntries(Map map) {
+  private static Slice makeEntries(Map map) {
     // It would be nice to sort the list, but we can only do that if the keys are comparable.
     // (And we don't want to sort a LinkedHashMap.)
 
@@ -42,6 +43,6 @@ class MapMirror extends Mirror {
       out.add(keyName, e.getValue());
     }
 
-    return new Page(out, 0);
+    return out.firstPage();
   }
 }

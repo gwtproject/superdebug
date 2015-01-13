@@ -8,7 +8,8 @@ import java.util.List;
 
 /**
  * Provides reflective access to a Java or JavaScript object, for display in the debugger.
- * The default implementation displays if it's a generic Java object.
+ *
+ * <p>The default implementation handles Java objects by displaying their fields.
  */
 class Mirror {
 
@@ -16,22 +17,22 @@ class Mirror {
    * Returns true if this mirror can display the given object.
    */
   boolean canDisplay(Any any) {
-    return any.toJava() != null;
+    return any.isJava();
   }
 
   /**
    * Returns a single-line summary of the object, to be displayed before it's expanded.
    */
   String getHeader(Any any) {
-    return any.toJava().getClassName() + " (Java)";
+    return any.getJavaClassName() + " (Java)";
   }
 
   boolean hasBody(Any any) {
-    return any.toJava().hasFields();
+    return any.hasJavaFields();
   }
 
-  Page getBody(Any any) {
-    return any.toJava().getFields().firstPage();
+  Slice getBody(Any any) {
+    return any.getJavaFields();
   }
 
   /**
@@ -39,47 +40,6 @@ class Mirror {
    */
   List<Mirror> childDeps() {
     return Collections.emptyList();
-  }
-
-  /**
-   * Used to page through large lists of children.
-   */
-  static class Page {
-    // The number of children to display before a "More" prompt.
-    static final int CHILDREN_PER_PAGE = 100;
-
-    private final Mirror.Children children;
-    private final int start;
-
-    Page(Mirror.Children children, int start) {
-      this.children = children;
-      this.start = start;
-    }
-
-    int firstIndex() {
-      return start;
-    }
-
-    int lastIndex() {
-      return firstIndex() + length() - 1;
-    }
-
-    int length() {
-      int remaining = children.length() - start;
-      return remaining > CHILDREN_PER_PAGE ? CHILDREN_PER_PAGE : remaining;
-    }
-
-    Child get(int index) {
-      return children.get(index + start);
-    }
-
-    Page nextPage() {
-      int remaining = children.length() - start;
-      if (remaining <= CHILDREN_PER_PAGE) {
-        return null;
-      }
-      return new Page(children, start + CHILDREN_PER_PAGE);
-    }
   }
 
   /**
@@ -93,19 +53,31 @@ class Mirror {
     }-*/;
 
     final void add(String name, Object value) {
-      addAny(name, Any.fromObject(value));
+      addAny(name, Any.fromJava(value));
     }
 
     final void addInt(String name, int value) {
-      addAny(name, Any.toJsNumber(value));
+      addAny(name, Any.createJsNumber(value));
     }
 
     final void addAny(String name, Any value) {
       push(Child.create(name, value));
     }
 
-    final Page firstPage() {
-      return new Page(this, 0);
+    final native void sort() /*-{
+      this.sort(function compare(a, b) {
+        if (a.name < b.name) {
+          return -1;
+        } else if (a.name == b.name) {
+          return 0;
+        } else {
+          return 1;
+        }
+    });
+    }-*/;
+
+    final Slice firstPage() {
+      return new Slice(this);
     }
   }
 

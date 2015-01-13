@@ -28,7 +28,12 @@ public class Main implements EntryPoint {
 
     private static native JavaScriptObject makeJsObject() /*-{
       function Thing() {}
-      return {"a": 123, "b": 456, "c": {"d": "e"}, "thing": new Thing()};
+      return {
+        "aNumber": 123,
+        "aString": "foo",
+        "anArray": [1, 2, 3],
+        "anObject": {"d": "e"},
+        "aThing": new Thing()};
     }-*/;
 
     private static Map<String, Object> makeExampleMap() {
