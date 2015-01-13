@@ -1,7 +1,6 @@
 package com.google.gwt.debugformat.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,45 +39,6 @@ class Mirror {
    */
   List<Mirror> childDeps() {
     return Collections.emptyList();
-  }
-
-  /**
-   * A list of the children of a node in the debugger.
-   */
-  static class Children extends JsArray<Child> {
-    protected Children() {}
-
-    static native Children create() /*-{
-      return [];
-    }-*/;
-
-    final void add(String name, Object value) {
-      addAny(name, Any.fromJava(value));
-    }
-
-    final void addInt(String name, int value) {
-      addAny(name, Any.createJsNumber(value));
-    }
-
-    final void addAny(String name, Any value) {
-      push(Child.create(name, value));
-    }
-
-    final native void sort() /*-{
-      this.sort(function compare(a, b) {
-        if (a.name < b.name) {
-          return -1;
-        } else if (a.name == b.name) {
-          return 0;
-        } else {
-          return 1;
-        }
-    });
-    }-*/;
-
-    final Slice firstPage() {
-      return new Slice(this);
-    }
   }
 
   /**

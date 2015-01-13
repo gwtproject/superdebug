@@ -4,11 +4,24 @@ package com.google.gwt.debugformat.client;
  * A fake node in the debug tree.
  * (It doesn't correspond directly to a JavaScript object.)
  */
-interface DebugNode {
+class DebugNode {
+  final String header;
+  final Slice body;
 
-  String getHeader();
+  DebugNode(String header, Slice body) {
+    this.header = header;
+    this.body = body;
+  }
 
-  boolean hasBody();
+  String getHeader() {
+    return header;
+  }
 
-  Slice getBody();
+  boolean hasBody() {
+    return body != null;
+  }
+
+  Slice getBody() {
+    return body;
+  }
 }

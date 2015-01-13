@@ -67,7 +67,7 @@ class MirrorFormatter implements Formatter {
       for (Mirror m : mirrors) {
         if (m.canDisplay(object)) {
           Slice first = m.getBody(object);
-          return first.renderAsBody();
+          return renderBody(first);
         }
       }
       return null;
@@ -81,6 +81,50 @@ class MirrorFormatter implements Formatter {
     TemplateBuilder b = new TemplateBuilder("span");
     b.text(header);
     return b.build();
+  }
+
+  static TemplateNode renderBody(Slice slice) {
+    TemplateBuilder out = new TemplateBuilder("ol");
+    out.style("list-style-type:none; padding-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 12px");
+
+    for (int i = 0; i < slice.length(); i++) {
+      renderChild(out, slice.get(i));
+    }
+
+    return out.build();
+  }
+
+  private static void renderChild(TemplateBuilder out, Mirror.Child child) {
+    Any value = child.getValue();
+
+    out.startTag("li");
+
+    if (value.isJsObject()) {
+      out.startObjectRef(value);
+      nameSpan(out, child.getName());
+      if (!value.isJava()) {
+        // The header isn't automatically generated for non-custom objects.
+        out.text(value.getJsName());
+      }
+      out.endTag();
+    } else {
+      out.style("padding-left: 13px;");
+      out.startTag("span");
+      nameSpan(out, child.getName());
+      out.text(value.getJsStringValue());
+      out.endTag();
+    }
+
+    out.endTag();
+  }
+
+  private static void nameSpan(TemplateBuilder out, String name) {
+    if (name.isEmpty()) {
+      return;
+    }
+    out.startTag("span", "color: rgb(136, 19, 145)");
+    out.text(name + " ");
+    out.endTag();
   }
 
   private static class DebugNodeMirror extends Mirror {

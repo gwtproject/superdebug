@@ -24,15 +24,13 @@ class MapMirror extends Mirror {
     Map m = (Map) any.toJava();
 
     Children out = Children.create();
-    out.addInt("size", m.size());
-    out.add("entries", makeEntries(m));
-    out.add("other fields", any.getJavaFields());
-    return out.firstPage();
+    out.addSliced(makeEntries(m));
+    out.addAll(any.getJavaFields());
+    return out.toSlice();
   }
 
-  private static Slice makeEntries(Map map) {
-    // It would be nice to sort the list, but we can only do that if the keys are comparable.
-    // (And we don't want to sort a LinkedHashMap.)
+  private static Children makeEntries(Map map) {
+    // We shouldn't sort the keys because it might be a LinkedHashMap or the keys might not be Comparable.
 
     Children out = Children.create();
 
@@ -40,9 +38,9 @@ class MapMirror extends Mirror {
       Map.Entry e = (Map.Entry) o;
       Object key = e.getKey();
       String keyName = key == null ? "null" : key.toString();
-      out.add(keyName, e.getValue());
+      out.add(keyName + ":", e.getValue());
     }
 
-    return out.firstPage();
+    return out;
   }
 }

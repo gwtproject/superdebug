@@ -23,22 +23,21 @@ public class CollectionMirror extends Mirror {
     Collection c = (Collection) any.toJava();
 
     Children out = Children.create();
-    out.addInt("size", c.size());
-    out.add("entries", makeEntries(c));
-    out.add("other fields", any.getJavaFields());
-    return out.firstPage();
+    out.addSliced(makeEntries(c));
+    out.addAll(any.getJavaFields());
+    return out.toSlice();
   }
 
-  private static Slice makeEntries(Collection c) {
+  private static Children makeEntries(Collection c) {
     Children out = Children.create();
 
     int i = 0;
     for (Object item : c) {
-      String keyName = String.valueOf(i);
+      String keyName = String.valueOf(i) + ":";
       out.add(keyName, item);
       i++;
     }
 
-    return out.firstPage();
+    return out;
   }
 }
