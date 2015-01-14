@@ -58,11 +58,11 @@ class MirrorFormatter implements Formatter, Mirror.Context {
   }
 
   @Override
-  public boolean hasBody(Any object) {
+  public boolean hasBody(Any any) {
     try {
       for (Mirror mirror : mirrors) {
-        if (mirror.canDisplay(object)) {
-          return mirror.hasChildren(object);
+        if (mirror.canDisplay(any)) {
+          return mirror.hasChildren(any);
         }
       }
       return false;
@@ -73,11 +73,11 @@ class MirrorFormatter implements Formatter, Mirror.Context {
   }
 
   @Override
-  public TemplateNode body(Any object) {
+  public TemplateNode body(Any any) {
     try {
       for (Mirror m : mirrors) {
-        if (m.canDisplay(object)) {
-          return renderBody(object, m.getChildren(object));
+        if (m.canDisplay(any)) {
+          return renderBody(m.getChildren(any));
         }
       }
       return null;
@@ -87,13 +87,24 @@ class MirrorFormatter implements Formatter, Mirror.Context {
     }
   }
 
+  boolean isHeaderOnly(Any any) {
+    if (any.isJsObject()) {
+      for (Mirror m : mirrors) {
+        if (m.canDisplay(any)) {
+          return !m.hasChildren(any);
+        }
+      }
+    }
+    return false;
+  }
+
   private static TemplateNode renderHeader(String header) {
     TemplateBuilder b = new TemplateBuilder("span");
     b.text(header);
     return b.build();
   }
 
-  static TemplateNode renderBody(Any object, Children.Slice children) {
+  TemplateNode renderBody(Children.Slice children) {
     TemplateBuilder out = new TemplateBuilder("ol");
     out.style("list-style-type:none; padding-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 12px");
 
@@ -101,24 +112,21 @@ class MirrorFormatter implements Formatter, Mirror.Context {
       renderChild(out, children.get(i));
     }
 
-    if (object.isJava()) {
-      out.startTag("li");
-      out.style("padding-left: 13px;");
-
-      nameSpan(out, "class:");
-      out.text(object.getJavaClassName());
-      out.endTag();
-    }
-
     return out.build();
   }
 
-  private static void renderChild(TemplateBuilder out, Children.Entry entry) {
+  private void renderChild(TemplateBuilder out, Children.Entry entry) {
     Any value = entry.getValue();
 
     out.startTag("li");
 
-    if (value.isJsObject()) {
+    if (isHeaderOnly(value)) {
+      out.style("padding-left: 13px;");
+      out.startTag("span");
+      nameSpan(out, entry.getName());
+      out.add(header(value));
+      out.endTag();
+    } else if (value.isJsObject()) {
       out.startObjectRef(value);
       nameSpan(out, entry.getName());
       if (!value.isJava()) {

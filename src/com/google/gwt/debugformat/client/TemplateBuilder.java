@@ -29,6 +29,10 @@ class TemplateBuilder {
     node.push(text);
   }
 
+  void add(TemplateNode child) {
+    node.push(child);
+  }
+
   void startTag(String tagName) {
     startTag(tagName, null);
   }

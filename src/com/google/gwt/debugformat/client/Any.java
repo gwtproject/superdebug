@@ -59,7 +59,7 @@ class Any extends JavaScriptObject {
    */
   final native boolean isJava() /*-{
     // TODO: also check that it came from the same GWT app?
-    return this && typeof this === 'object' && this.getClass$;
+    return this && typeof this === 'object' && this.getClass$ && !this.hasOwnProperty("___clazz$");
   }-*/;
 
   /**
@@ -106,6 +106,7 @@ class Any extends JavaScriptObject {
     }
     Children ch = getFieldsImpl();
     ch.sort();
+    ch.add("class:", new DebugNode(getJavaClassName(), null));
     return ch.toSlice();
   }
 
@@ -116,27 +117,85 @@ class Any extends JavaScriptObject {
   private native Children getFieldsImpl() /*-{
 
     // TODO: we need a test to ensure this is in sync with JsIncrementalNamer
-    function getFieldName(key) {
+    function getJavaFieldName(key) {
       if (!key.endsWith("_g$")) {
-        return key;
+        return null;
       }
       var len = key.lastIndexOf('_', key.length - 4);
       if (len < 1) {
-        return key;
+        return null;
       }
       return key.substring(0, len);
     }
 
-    var keys = Object.keys(this);
-    var fields = [];
-    for (var i = 0; i < keys.length; ++i) {
-      var key = keys[i];
-      var field = {};
-      field.name = getFieldName(key) + ":";
-      field.value = this[key];
-      fields.push(field);
+    function isField(key, name, value) {
+      if (name === "$init" || name === "$H") {
+        return false;
+      }
+      if (typeof value === "function") { // } && !Object.hasOwnProperty(key)) {
+        return false;
+      }
+      return true;
     }
 
-    return fields;
+    var javaFields = [];
+    // Deliberately looping over inherited props
+    for (var key in this) {
+      if (typeof key === "string") {
+        var name = getJavaFieldName(key);
+        var value = this[key];
+        if (name && isField(key, name, value)) {
+          var longValue = @Any::toLongValue(Lcom/google/gwt/debugformat/client/Any;)(value);
+          if (longValue !== null) {
+            value = longValue;
+          }
+          var child = {
+            name: name + ":",
+            value: value
+          };
+          javaFields.push(child);
+        }
+      }
+    }
+    return javaFields;
+  }-*/;
+
+  /**
+   * If this is an unboxed Java long, returns its value as a DebugNode. Otherwise returns null.
+   * @return
+   */
+  private static DebugNode toLongValue(Any any) {
+    if (!isLong(any)) {
+      return null;
+    }
+    Long result = new Long(987654321);
+    if (any.toLongValueImpl(result)) {
+      return new DebugNode(result.toString(), null);
+    } else {
+      return null;
+    }
+  }
+
+  private native boolean toLongValueImpl(Long target) /*-{
+    var keys = Object.keys(target);
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      if (key.startsWith("value") && key.endsWith("_g$")) {
+        if (@Any::isLong(Lcom/google/gwt/debugformat/client/Any;)(target[key])) {
+          target[key] = this;
+          return true;
+        }
+      }
+    }
+    return false; // not found
+  }-*/;
+
+  /**
+   * Returns true if this is an unboxed Java long.
+   */
+  private static native boolean isLong(Any x) /*-{
+    return x && typeof x === "object" && x.constructor && x.constructor.name === "Object" &&
+        Object.keys(x).length === 3 &&
+        typeof x.h === "number" && typeof x.m === "number" && typeof x.l === "number";
   }-*/;
 }

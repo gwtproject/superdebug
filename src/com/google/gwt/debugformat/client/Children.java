@@ -118,7 +118,7 @@ class Children extends JsArray<Children.Entry> {
      * Creates a slice for a range of values.
      */
     Slice(Children children, int start, int end) {
-      assert end > start;
+      assert end >= start;
       assert start >= 0;
       assert end <= children.length();
 
