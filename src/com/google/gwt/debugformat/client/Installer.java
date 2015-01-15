@@ -13,7 +13,8 @@ public class Installer implements EntryPoint {
   public void onModuleLoad() {
     //Formatter f = new HelloFormatter();
     Formatter f = new MirrorFormatter(Arrays.asList(
-        new NumberMirror(), new MapMirror(), new CollectionMirror(), new ArrayMirror(), new Mirror()));
+        new NumberMirror(), new MapMirror(), new CollectionMirror(), new WidgetCollectionMirror(),
+        new ArrayMirror(), new Mirror()));
     installFormatter(wrap(f));
   }
 
