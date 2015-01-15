@@ -104,7 +104,7 @@ class Any extends JavaScriptObject {
     }
     Children ch = getFieldsImpl();
     ch.sort();
-    ch.add("|class|", new DebugNode(getJavaClass().getCanonicalName(), null));
+    ch.add("<class>", new DebugNode(getJavaClass().getCanonicalName(), null));
     return ch.toSlice();
   }
 

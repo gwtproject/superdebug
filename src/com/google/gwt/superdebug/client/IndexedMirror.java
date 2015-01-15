@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * Base class for mirrors that contain ordered elements.
  */
-public abstract class IndexedMirror extends Mirror {
+abstract class IndexedMirror extends Mirror {
   @Override
   String getHeader(Context ctx, Any any) {
     StringBuilder out = new StringBuilder();

@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.IndexedPanel;
 
 import java.util.Iterator;
 
-public class IndexedPanelMirror extends IndexedMirror {
+class IndexedPanelMirror extends IndexedMirror {
 
   @Override
   boolean canDisplay(Any any) {

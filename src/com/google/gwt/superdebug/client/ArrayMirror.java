@@ -1,6 +1,6 @@
 package com.google.gwt.superdebug.client;
 
-public class ArrayMirror extends Mirror {
+class ArrayMirror extends Mirror {
 
   @Override
   boolean canDisplay(Any any) {

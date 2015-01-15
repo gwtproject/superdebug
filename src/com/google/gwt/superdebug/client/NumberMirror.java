@@ -1,6 +1,6 @@
 package com.google.gwt.superdebug.client;
 
-public class NumberMirror extends Mirror {
+class NumberMirror extends Mirror {
   @Override
   boolean canDisplay(Any any) {
     return any.toJava() instanceof Number;

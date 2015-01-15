@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.WidgetCollection;
 
 import java.util.Iterator;
 
-public class WidgetCollectionMirror extends IndexedMirror {
+class WidgetCollectionMirror extends IndexedMirror {
 
   @Override
   boolean canDisplay(Any any) {

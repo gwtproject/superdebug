@@ -1,9 +1,18 @@
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.0//EN"
         "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd">
 <module>
+    <!--
+    Adding a dependency on this module will enable support for custom variable formatting,
+    an experimental feature in Chrome's Dev Tools.
+    It has no effect when not running in Super Dev Mode.
+    -->
 
     <inherits name='com.google.gwt.user.User'/>
 
-    <entry-point class='com.google.gwt.superdebug.client.Installer'/>
+    <entry-point class='com.google.gwt.superdebug.client.Main'/>
 
+    <replace-with class="com.google.gwt.superdebug.client.Main.SuperDevInstaller">
+        <when-type-is class="com.google.gwt.superdebug.client.Main.Installer" />
+        <when-property-is name="superdevmode" value="on"/>
+    </replace-with>
 </module>
