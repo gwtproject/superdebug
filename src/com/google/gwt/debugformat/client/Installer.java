@@ -11,10 +11,12 @@ import java.util.Arrays;
 public class Installer implements EntryPoint {
   @Override
   public void onModuleLoad() {
-    //Formatter f = new HelloFormatter();
     Formatter f = new MirrorFormatter(Arrays.asList(
-        new NumberMirror(), new MapMirror(), new CollectionMirror(), new WidgetCollectionMirror(),
-        new ArrayMirror(), new Mirror()));
+        new NumberMirror(),
+        new MapMirror(), new CollectionMirror(), new ArrayMirror(),
+        new WidgetCollectionMirror(), new IndexedPanelMirror(),
+        new Mirror()
+    ));
     installFormatter(wrap(f));
   }
 

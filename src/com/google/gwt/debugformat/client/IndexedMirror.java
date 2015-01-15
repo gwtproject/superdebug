@@ -3,9 +3,9 @@ package com.google.gwt.debugformat.client;
 import java.util.Iterator;
 
 /**
- * Base class for mirrors that represent a kind of collection
+ * Base class for mirrors that contain ordered elements.
  */
-public abstract class IterMirror extends Mirror {
+public abstract class IndexedMirror extends Mirror {
   @Override
   String getHeader(Context ctx, Any any) {
     StringBuilder out = new StringBuilder();

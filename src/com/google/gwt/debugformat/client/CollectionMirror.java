@@ -6,7 +6,7 @@ import java.util.Iterator;
 /**
  * Provides a custom format for subclasses of Collection that shows their values.
  */
-public class CollectionMirror extends IterMirror {
+public class CollectionMirror extends IndexedMirror {
   @Override
   boolean canDisplay(Any any) {
     return any.toJava() instanceof Collection;
