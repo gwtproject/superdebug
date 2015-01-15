@@ -12,7 +12,7 @@ class Any extends JavaScriptObject {
   /* === as JavaScript === */
 
   /**
-   * Returns true if this is a regular JavaScript object.
+   * Returns true if this is a regular JavaScript object (including arrays).
    * (Doesn't include primitives, undefined, or null.)
    */
   final native boolean isJsObject() /*-{
@@ -54,12 +54,20 @@ class Any extends JavaScriptObject {
   }-*/;
 
   /**
-   * Returns true if this is a regular Java object.
+   * Returns true if this is a regular Java object or array.
    * (Doesn't include instances of String or JavaScriptObject.)
    */
   final native boolean isJava() /*-{
     // TODO: also check that it came from the same GWT app?
-    return this && typeof this === 'object' && this.getClass$ && !this.hasOwnProperty("___clazz$");
+    if (!this || typeof this !== "object") {
+      return false;
+    }
+    if (Array.isArray(this)) {
+      return this.___clazz$;
+    } else {
+      // Check if it's an instance, excluding prototypes.
+      return this.getClass$ && !this.hasOwnProperty("___clazz$");
+    }
   }-*/;
 
   /**
@@ -73,21 +81,11 @@ class Any extends JavaScriptObject {
     }
   }
 
-  /**
-   * Returns the full name of the Java class, or null if it's not Java.
-   */
-  final String getJavaClassName() {
+  final Class getJavaClass() {
     if (!isJava()) {
       return null;
     }
-    return getClass().getName();
-  }
-
-  final String getShortJavaClassName() {
-    if (!isJava()) {
-      return null;
-    }
-    return getClass().getSimpleName();
+    return getClass();
   }
 
   /**
@@ -106,7 +104,7 @@ class Any extends JavaScriptObject {
     }
     Children ch = getFieldsImpl();
     ch.sort();
-    ch.add("class:", new DebugNode(getJavaClassName(), null));
+    ch.add("|class|", new DebugNode(getJavaClass().getCanonicalName(), null));
     return ch.toSlice();
   }
 
@@ -159,6 +157,8 @@ class Any extends JavaScriptObject {
     }
     return javaFields;
   }-*/;
+
+  // TODO: better way to convert primitive longs to a string? Maybe use @UnsafeNativeLong annotation?
 
   /**
    * If this is an unboxed Java long, returns its value as a DebugNode. Otherwise returns null.

@@ -1,6 +1,8 @@
 package com.google.gwt.debugformat.example.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 
 import java.util.*;
 
@@ -14,8 +16,17 @@ class Example {
   private final Map<String, Object> aMap = makeExampleMap();
   private final List<Integer> aList = Arrays.asList(1, 2, 3);
   private final List<String> aBigList = makeStringList("hello", 120);
+  private final int[] intArray = new int[] {1, 2, 3};
+  private final String[] stringArray = new String[] {"one", "two", "three"};
+  private final String[][] stringArray2 = new String[][] {
+      {"first", "second"},
+      {"zero", "one"}
+  };
+  private final RootPanel rootPanel;
 
   Example() {
+    rootPanel = RootPanel.get("container");
+    rootPanel.add(new Label("hello!"));
     // Force variables to exist.
     assert !Integer.toString(hashCode()).isEmpty();
   }
@@ -23,7 +34,8 @@ class Example {
   @Override
   public int hashCode() {
     return aString.length() + anInt + ((int)aLong) + emptyJsObject.hashCode() + javaObject.hashCode() +
-        jsObject.hashCode() + aMap.hashCode() + aList.hashCode() + aBigList.hashCode();
+        jsObject.hashCode() + aMap.hashCode() + aList.hashCode() + aBigList.hashCode() +
+        intArray.hashCode() + stringArray.hashCode() + stringArray2.hashCode();
   }
 
   private static native JavaScriptObject makeJsObject() /*-{

@@ -1,32 +1,27 @@
 package com.google.gwt.debugformat.client;
 
-import java.util.Collection;
-import java.util.Iterator;
+public class ArrayMirror extends Mirror {
 
-/**
- * Provides a custom format for subclasses of Collection that shows their values.
- */
-public class CollectionMirror extends Mirror {
   @Override
   boolean canDisplay(Any any) {
-    return any.toJava() instanceof Collection;
+    return any.isJava() && any.getJavaClass().isArray() && !any.getJavaClass().getComponentType().isPrimitive();
   }
 
   @Override
   String getHeader(Context ctx, Any any) {
-    Collection c = (Collection) any.toJava();
+    Object[] array = (Object[]) any.toJava();
+    String baseName = array.getClass().getComponentType().getSimpleName();
 
     StringBuilder out = new StringBuilder();
-    out.append(any.getJavaClass().getSimpleName());
-    out.append("[" + c.size() + "] {");
+    out.append(baseName);
+    out.append("[" + array.length + "]{");
 
-    Iterator it = c.iterator();
     for (int i = 0; i < 4; i++) {
-      if (!it.hasNext()) {
+      if (i >= array.length) {
         out.append("}");
         return out.toString();
       }
-      String name = ctx.getShortName(Any.fromJava(it.next()));
+      String name = ctx.getShortName(Any.fromJava(array[i]));
       if (name == null) {
         if (i == 0) {
           out.append("…}");
@@ -46,25 +41,25 @@ public class CollectionMirror extends Mirror {
 
   @Override
   boolean hasChildren(Any any) {
-    Collection c = (Collection) any.toJava();
-    return !c.isEmpty();
+    Object[] array = (Object[]) any.toJava();
+    return array.length > 0;
   }
 
   @Override
   Children.Slice getChildren(Any any) {
-    Collection c = (Collection) any.toJava();
+    Object[] array = (Object[]) any.toJava();
 
     Children out = Children.create();
-    out.addSliced(makeEntries(c));
+    out.addSliced(makeEntries(array));
     out.addAll(any.getJavaFields());
     return out.toSlice();
   }
 
-  private static Children makeEntries(Collection c) {
+  private static Children makeEntries(Object[] array) {
     Children out = Children.create();
 
     int i = 0;
-    for (Object item : c) {
+    for (Object item : array) {
       String keyName = String.valueOf(i) + ":";
       out.add(keyName, item);
       i++;

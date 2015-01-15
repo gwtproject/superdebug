@@ -19,7 +19,7 @@ class MapMirror extends Mirror {
     Map m = (Map) any.toJava();
 
     StringBuilder out = new StringBuilder();
-    out.append(any.getShortJavaClassName());
+    out.append(any.getJavaClass().getSimpleName());
     out.append("[");
     out.append(m.size());
     out.append("] {");

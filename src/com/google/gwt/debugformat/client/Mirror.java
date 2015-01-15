@@ -12,7 +12,7 @@ class Mirror {
    * Returns true if this mirror can display the given object.
    */
   boolean canDisplay(Any any) {
-    return any.isJava();
+    return any.isJava() && !any.getJavaClass().isArray();
   }
 
   /**
@@ -27,7 +27,7 @@ class Mirror {
    * Returns a single-line summary of the object, to be displayed before it's expanded.
    */
   String getHeader(Context ctx, Any any) {
-    return any.getShortJavaClassName() + " (Java)";
+    return any.getJavaClass().getSimpleName() + " (Java)";
   }
 
   /**

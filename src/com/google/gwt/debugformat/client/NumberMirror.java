@@ -13,6 +13,6 @@ public class NumberMirror extends Mirror {
 
   @Override
   String getHeader(Context ctx, Any any) {
-    return any.toJava().toString() + " (" + any.getShortJavaClassName() + ")";
+    return any.toJava().toString() + " (" + any.getJavaClass().getSimpleName() + ")";
   }
 }
