@@ -1,4 +1,4 @@
-package com.google.gwt.debugformat.example.client;
+package com.google.gwt.superdebug.example.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.ui.Label;
@@ -6,6 +6,9 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import java.util.*;
 
+/**
+ * An object containing various examples to look at in the debugger.
+ */
 class Example {
   private final String aString = "a string";
   private final int anInt = 1234;

@@ -1,4 +1,4 @@
-package com.google.gwt.debugformat.example.client;
+package com.google.gwt.superdebug.example.client;
 
 import com.google.gwt.core.client.EntryPoint;
 

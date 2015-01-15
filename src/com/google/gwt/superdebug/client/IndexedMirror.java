@@ -1,27 +1,24 @@
-package com.google.gwt.debugformat.client;
+package com.google.gwt.superdebug.client;
 
-public class ArrayMirror extends Mirror {
+import java.util.Iterator;
 
-  @Override
-  boolean canDisplay(Any any) {
-    return any.isJava() && any.getJavaClass().isArray() && !any.getJavaClass().getComponentType().isPrimitive();
-  }
-
+/**
+ * Base class for mirrors that contain ordered elements.
+ */
+public abstract class IndexedMirror extends Mirror {
   @Override
   String getHeader(Context ctx, Any any) {
-    Object[] array = (Object[]) any.toJava();
-    String baseName = array.getClass().getComponentType().getSimpleName();
-
     StringBuilder out = new StringBuilder();
-    out.append(baseName);
-    out.append("[" + array.length + "]{");
+    out.append(any.getJavaClass().getSimpleName());
+    out.append("[" + getSize(any) + "] {");
 
+    Iterator it = getIterator(any);
     for (int i = 0; i < 4; i++) {
-      if (i >= array.length) {
+      if (!it.hasNext()) {
         out.append("}");
         return out.toString();
       }
-      String name = ctx.getShortName(Any.fromJava(array[i]));
+      String name = ctx.getShortName(Any.fromJava(it.next()));
       if (name == null) {
         if (i == 0) {
           out.append("…}");
@@ -39,27 +36,30 @@ public class ArrayMirror extends Mirror {
     return out.toString();
   }
 
+  abstract Iterator getIterator(Any any);
+
+  abstract int getSize(Any any);
+
   @Override
   boolean hasChildren(Any any) {
-    Object[] array = (Object[]) any.toJava();
-    return array.length > 0;
+    return getSize(any) > 0;
   }
 
   @Override
   Children.Slice getChildren(Any any) {
-    Object[] array = (Object[]) any.toJava();
-
     Children out = Children.create();
-    out.addSliced(makeEntries(array));
+    out.addSliced(makeEntries(any));
     out.addAll(any.getJavaFields());
     return out.toSlice();
   }
 
-  private static Children makeEntries(Object[] array) {
+  private Children makeEntries(Any any) {
     Children out = Children.create();
 
+    Iterator it = getIterator(any);
     int i = 0;
-    for (Object item : array) {
+    while (it.hasNext()) {
+      Object item = it.next();
       String keyName = String.valueOf(i) + ":";
       out.add(keyName, item);
       i++;

@@ -1,4 +1,4 @@
-package com.google.gwt.debugformat.client;
+package com.google.gwt.superdebug.client;
 
 public class NumberMirror extends Mirror {
   @Override

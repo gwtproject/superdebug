@@ -3,8 +3,7 @@
 <module>
 
     <inherits name='com.google.gwt.user.User'/>
-    <inherits name="com.google.gwt.debugformat.DebugFormat"/>
 
-    <entry-point class='com.google.gwt.debugformat.example.client.Main'/>
+    <entry-point class='com.google.gwt.superdebug.client.Installer'/>
 
 </module>

@@ -1,4 +1,4 @@
-package com.google.gwt.debugformat.client;
+package com.google.gwt.superdebug.client;
 
 /**
  * Provides reflective access to a Java or JavaScript object, for display in the debugger as a tree.

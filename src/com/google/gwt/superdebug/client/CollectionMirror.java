@@ -1,4 +1,4 @@
-package com.google.gwt.debugformat.client;
+package com.google.gwt.superdebug.client;
 
 import java.util.Collection;
 import java.util.Iterator;

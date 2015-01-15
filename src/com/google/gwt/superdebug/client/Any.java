@@ -1,4 +1,4 @@
-package com.google.gwt.debugformat.client;
+package com.google.gwt.superdebug.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
@@ -143,7 +143,7 @@ class Any extends JavaScriptObject {
         var name = getJavaFieldName(key);
         var value = this[key];
         if (name && isField(key, name, value)) {
-          var longValue = @Any::toLongValue(Lcom/google/gwt/debugformat/client/Any;)(value);
+          var longValue = @Any::toLongValue(*)(value);
           if (longValue !== null) {
             value = longValue;
           }
@@ -181,7 +181,7 @@ class Any extends JavaScriptObject {
     for (var i = 0; i < keys.length; i++) {
       var key = keys[i];
       if (key.startsWith("value") && key.endsWith("_g$")) {
-        if (@Any::isLong(Lcom/google/gwt/debugformat/client/Any;)(target[key])) {
+        if (@Any::isLong(*)(target[key])) {
           target[key] = this;
           return true;
         }

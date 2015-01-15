@@ -1,4 +1,4 @@
-package com.google.gwt.debugformat.client;
+package com.google.gwt.superdebug.client;
 
 /**
  * A custom renderer for objects being inspected in a debugger.

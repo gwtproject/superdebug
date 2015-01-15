@@ -1,4 +1,4 @@
-package com.google.gwt.debugformat.client;
+package com.google.gwt.superdebug.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -6,7 +6,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import java.util.Arrays;
 
 /**
- * Installs the custom formatter.
+ * Installs Super Debug.
  */
 public class Installer implements EntryPoint {
   @Override
@@ -24,13 +24,13 @@ public class Installer implements EntryPoint {
     // Make delegate available mostly for debugging.
     var f = {"delegate": formatter};
     f.header = function (obj) {
-      return f.delegate.@Formatter::header(Lcom/google/gwt/debugformat/client/Any;)(obj);
+      return f.delegate.@Formatter::header(*)(obj);
     }
     f.hasBody = function (obj) {
-      return f.delegate.@Formatter::hasBody(Lcom/google/gwt/debugformat/client/Any;)(obj);
+      return f.delegate.@Formatter::hasBody(*)(obj);
     }
     f.body = function (obj) {
-      return f.delegate.@Formatter::body(Lcom/google/gwt/debugformat/client/Any;)(obj);
+      return f.delegate.@Formatter::body(*)(obj);
     }
     return f;
   }-*/;
