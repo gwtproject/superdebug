@@ -1,8 +1,15 @@
 package com.google.gwt.superdebug.example.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 import java.util.*;
 
@@ -29,7 +36,7 @@ class Example {
 
   Example() {
     rootPanel = RootPanel.get("container");
-    rootPanel.add(new Label("hello!"));
+    rootPanel.add(makeApp());
     // Force variables to exist.
     assert !Integer.toString(hashCode()).isEmpty();
   }
@@ -65,5 +72,23 @@ class Example {
       out.add(prefix + String.valueOf(i));
     }
     return out;
+  }
+
+  private static Widget makeApp() {
+	final TextBox text = new TextBox();
+
+	Button button = new Button("Show Alert");
+	button.addClickHandler(new ClickHandler() {
+	  @Override
+	  public void onClick(ClickEvent event) {
+	    Window.alert("text is: " + text.getValue());
+	  }
+	});
+
+	HorizontalPanel panel = new HorizontalPanel();
+	panel.add(text);
+	panel.add(button);
+
+	return panel;
   }
 }
